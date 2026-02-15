@@ -31,4 +31,38 @@ public with sharing class PurchaseToolController {
 
         return Database.query(query);
     }
+
+    @AuraEnabled(Cacheable=true)
+    public static Boolean isUserManager() {
+        return [SELECT IsManager__c FROM User WHERE Id = :UserInfo.getUserId()].IsManager__c;
+    }
+
+    @AuraEnabled(Cacheable=true)
+    public static String getUnsplashImageUrl(String itemName) {
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+
+        String apiKey = 'Access_key'; //Delete access key from git
+        String endpoint = 'https://api.unsplash.com/search/photos?query=' + EncodingUtil.urlEncode(itemName, 'UTF-8') + '&per_page=1';
+
+        request.setEndpoint(endpoint);
+        request.setMethod('GET');
+        request.setHeader('Authorization', 'Client-ID ' + apiKey);
+
+        try {
+            HttpResponse response = http.send(request);
+            if (response.getStatusCode() == 200) {
+                Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+                List<Object> resultsList = (List<Object>) results.get('results');
+                if (!resultsList.isEmpty()) {
+                    Map<String, Object> firstPhoto = (Map<String, Object>) resultsList[0];
+                    Map<String, Object> urls = (Map<String, Object>) firstPhoto.get('urls');
+                    return (String) urls.get('regular');
+                }
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Error calling Unsplash: ' + e.getMessage());
+        }
+        return null;
+    }
 }
