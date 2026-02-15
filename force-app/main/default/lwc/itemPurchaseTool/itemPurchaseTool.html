@@ -1,0 +1,97 @@
+<!--
+ - Created by George on 16.02.2026.
+ -->
+
+<!-- Item Purchase Tool -->
+<template>
+    <lightning-card>
+        <div slot="title" class="slds-grid slds-grid_vertical-align-center">
+            <template if:true={isManager}>
+                <lightning-button
+                        label="Create Item"
+                        variant="brand"
+                        onclick="{handleCreateItem}"
+                        class="slds-m-right_medium">
+                </lightning-button>
+            </template>
+
+            <div class="slds-col slds-text-align_center slds-text-heading_small">
+                {accName} | {accNumber} | {accIndustry}
+            </div>
+
+            <div class="slds-col_reversed">
+                <lightning-button
+                        label="Cart"
+                        icon-name="utility:cart"
+                        onclick="{toggleCart}"
+                        variant="neutral">
+                </lightning-button>
+            </div>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <div class=slds-m-bottom_medium>
+                <lightning-input
+                        label="Search"
+                        type="search"
+                        variant="label-hidden"
+                        placeholder="SEARCH"
+                        onchange={handleSearchChange}>
+                </lightning-input>
+            </div>
+
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_3-of-4">
+                    <div class="slds-grid slds-wrap">
+                        <template if:true={items}>
+                            <template for:each={items} for:item="item">
+                                <div key={item.Id} class="slds-col slds-size_1-of-2 slds-p-around_small">
+                                    <div class="slds-box slds-theme_default slds-text-align_center">
+                                        <h3 class="slds-text-heading_medium">{item.Name}</h3>
+                                        <div class="slds-m-vertical_small" style="height:100px; overflow: hidden;">
+                                            <p>{item.Description__c}</p>
+                                            <template if:true={item.Image__c}>
+                                                <img src="{item.Image__c}" alt={item.Name} style="max-height: 60px;"/>
+                                            </template>
+                                        </div>
+                                        <div class="slds-grid slds-grid_align-center">
+                                            <lightning-button
+                                                label="Details"
+                                                onclick={handleDetails}
+                                                data-id={item.Id}
+                                                class="slds-m-right_x-small">
+                                            </lightning-button>
+                                            <lightning-button
+                                                    label="Add"
+                                                    variant="brand"
+                                                    onclick={addToCart}
+                                                    data-id={item.Id}
+                                            >
+                                            </lightning-button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-4 slds-theme_shade">
+                    <h2 class="slds-text-heading_medium slds-m-bottom_small">FILTERS</h2>
+                    <p class="slds-m-bottom_small">Listed items: {itemsCount}</p>
+
+                    <h3 class="slds-text-title_caps">Type:</h3>
+                    <template for:each={typeOptions} for:item="opt">
+                        <div key={opt} class="slds-p-left_small">- {opt}</div>
+                    </template>
+
+                    <h3 class="slds-text-title_caps slds-m-top_medium">Family:</h3>
+                    <template for:each={familyOptions} for:item="opt">
+                        <div key={opt} class="slds-p-left_small">- {opt}</div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>
