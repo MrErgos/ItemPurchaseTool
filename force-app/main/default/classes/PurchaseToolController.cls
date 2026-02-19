@@ -26,7 +26,7 @@ public with sharing class PurchaseToolController {
         }
 
         if (!filters.isEmpty()) {
-            query += 'WHERE ' + String.join(filters, ' AND ');
+            query += ' WHERE ' + String.join(filters, ' AND ');
         }
 
         return Database.query(query);
@@ -37,12 +37,12 @@ public with sharing class PurchaseToolController {
         return [SELECT IsManager__c FROM User WHERE Id = :UserInfo.getUserId()].IsManager__c;
     }
 
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled
     public static String getUnsplashImageUrl(String itemName) {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
 
-        String apiKey = 'Access_key'; //Delete access key from git
+        String apiKey = 'HgGtV_b6waTm1xAYbz2v8cMccrlSF4_wuvTEWwBYDzQ'; //Delete access key from git
         String endpoint = 'https://api.unsplash.com/search/photos?query=' + EncodingUtil.urlEncode(itemName, 'UTF-8') + '&per_page=1';
 
         request.setEndpoint(endpoint);
@@ -64,5 +64,32 @@ public with sharing class PurchaseToolController {
             throw new AuraHandledException('Error calling Unsplash: ' + e.getMessage());
         }
         return null;
+    }
+
+    @AuraEnabled
+    public static Id createPurchaseItems(Id accountId, List<Id> itemIds) {
+        try {
+            Purchase__c p = new Purchase__c(
+                    ClientId__c = accountId
+            );
+            insert p;
+
+            List<PurchaseLine__c> lines = new List<PurchaseLine__c>();
+            for(Id itemId : itemIds) {
+                lines.add(new PurchaseLine__c(
+                        PurchaseId__c = p.Id,
+                        ItemId__c = itemId,
+                        Amount__c = 1
+                ));
+            }
+
+            if(!lines.isEmpty()) {
+                insert lines;
+            }
+
+            return p.Id;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error during checkout: ' + e.getMessage());
+        }
     }
 }
