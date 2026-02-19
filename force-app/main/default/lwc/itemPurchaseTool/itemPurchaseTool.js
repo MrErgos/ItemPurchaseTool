@@ -128,10 +128,6 @@ export default class ItemPurchaseTool extends NavigationMixin(LightningElement) 
         return this.items.length;
     }
 
-    toggleCart() {
-        this.isCartModalOpen = !this.isCartModalOpen;
-    }
-
     handleDetails(event) {
         const itemId = event.target.dataset.id;
         this.selectedItem = this.items.find(item => item.Id === itemId);
@@ -140,5 +136,54 @@ export default class ItemPurchaseTool extends NavigationMixin(LightningElement) 
 
     closeDetailsModal() {
         this.isDetailsModalOpen = false;
+    }
+
+    toggleCart() {
+        this.isCartModalOpen = !this.isCartModalOpen;
+    }
+
+    clearCart() {
+        this.cart = [];
+    }
+
+    get isCartEmpty() {
+        return this.cart.length === 0;
+    }
+
+    get cartTotal() {
+        return this.cart.reduce((sum, item) => sum + (item.Price__c || 0), 0);
+    }
+
+    async handleCheckout() {
+        const itemIdsList = this.cart.map(item => item.Id);
+
+        if (itemIdsList.length === 0) return;
+
+        try {
+            const purchaseId = await createPurchaseItems({
+                accountId: this.recordId,
+                itemIds: itemIdsList
+            });
+
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Success',
+                message: 'Purchase created successfully!',
+                variant: 'success'
+            }));
+
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: purchaseId,
+                    objectApiName: 'Purchase__c',
+                    actionName: 'view'
+                }
+            });
+
+            this.cart = [];
+            this.isCartModalOpen = false;
+        } catch (error) {
+            console.error('Checkout Error Detail:', error.body?.message || error.message);
+        }
     }
 }
