@@ -83,12 +83,24 @@
 
                     <h3 class="slds-text-title_caps">Type:</h3>
                     <template for:each={typeOptions} for:item="opt">
-                        <div key={opt} class="slds-p-left_small">- {opt}</div>
+                        <div key={opt.value}
+                             class="slds-p-left_small slds-p-vertical_xx-small"
+                             onclick={handleTypeSelect}
+                             data-value={opt.value}
+                             style="cursor:pointer; color: blue;">
+                            - {opt.label}
+                        </div>
                     </template>
 
                     <h3 class="slds-text-title_caps slds-m-top_medium">Family:</h3>
                     <template for:each={familyOptions} for:item="opt">
-                        <div key={opt} class="slds-p-left_small">- {opt}</div>
+                        <div key={opt.value}
+                             class="slds-p-left_small slds-p-vertical_xx-small"
+                             onclick={handleFamilySelect}
+                             data-value={opt.value}
+                             style="cursor:pointer; color: blue;">
+                            - {opt.label}
+                        </div>
                     </template>
                 </div>
             </div>

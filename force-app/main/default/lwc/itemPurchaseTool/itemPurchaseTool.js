@@ -12,6 +12,11 @@ import getUnsplashImageUrl from '@salesforce/apex/PurchaseToolController.getUnsp
 import createPurchaseItems from '@salesforce/apex/PurchaseToolController.createPurchaseItems';
 import { NavigationMixin } from 'lightning/navigation';
 
+import { getPicklistValues, getObjectInfo } from 'lightning/uiObjectInfoApi';
+import ITEM_OBJECT from '@salesforce/schema/Item__c';
+import TYPE_FIELD from '@salesforce/schema/Item__c.Type__c';
+import FAMILY_FIELD from '@salesforce/schema/Item__c.Family__c';
+
 export default class ItemPurchaseTool extends NavigationMixin(LightningElement) {
     @api recordId;
     @track items = [];
@@ -65,10 +70,6 @@ export default class ItemPurchaseTool extends NavigationMixin(LightningElement) 
     get accIndustry() {
         return this.account.data?.Industry || 'No Industry';
     }
-
-    typeOptions = ['Type 1', 'Type 2', 'Type 3']; //mocks
-
-    familyOptions = ['Family 1', 'Family 2']; //mocks
     handleSearchChange(event) {
         this.selectedSearchItem = event.target.value;
     }
@@ -185,5 +186,38 @@ export default class ItemPurchaseTool extends NavigationMixin(LightningElement) 
         } catch (error) {
             console.error('Checkout Error Detail:', error.body?.message || error.message);
         }
+    }
+
+    @track typeOptions = [];
+    @track familyOptions = [];
+
+    @wire(getObjectInfo, {objectApiName: ITEM_OBJECT})
+    itemObjectInfo;
+
+    @wire(getPicklistValues, {
+        fieldApiName: TYPE_FIELD,
+        recordTypeId: '$itemObjectInfo.data.defaultRecordTypeId'
+    })
+    wiredTypeValues({ error, data}) {
+        if (data) {
+            this.typeOptions = [{label: 'All Types', value: ''}, ...data.values];
+        }
+    }
+
+    @wire(getPicklistValues, {
+        fieldApiName: FAMILY_FIELD,
+        recordTypeId: '$itemObjectInfo.data.defaultRecordTypeId'
+    })
+    wireFamilyValues({error, data}) {
+        if (data) {
+            this.familyOptions = [{label: 'All Families', value: ''}, ...data.values];
+        }
+    }
+
+    handleTypeSelect(event) {
+        this.selectedType = event.target.dataset.value;
+    }
+    handleFamilySelect(event) {
+        this.selectedFamily = event.target.dataset.value;
     }
 }
