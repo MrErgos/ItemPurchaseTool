@@ -126,4 +126,23 @@
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
+    <template if:true={isDetailsModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeDetailsModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                    </button>
+                    <h2 class="slds-text-heading_medium">{selectedItem.Name}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium slds-text-align_center">
+                    <img src={selectedItem.Image__c} style="max-height: 300px;" class="slds-m-bottom_medium"/>
+                    <p><strong>Description:</strong> {selectedItem.Description__c}</p>
+                    <p><strong>Price:</strong> {selectedItem.Price__c}$</p>
+                    <p><strong>Family:</strong> {selectedItem.Family__c}</p>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
 </template>

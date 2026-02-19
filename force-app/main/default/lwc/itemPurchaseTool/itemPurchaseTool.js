@@ -131,4 +131,14 @@ export default class ItemPurchaseTool extends NavigationMixin(LightningElement) 
     toggleCart() {
         this.isCartModalOpen = !this.isCartModalOpen;
     }
+
+    handleDetails(event) {
+        const itemId = event.target.dataset.id;
+        this.selectedItem = this.items.find(item => item.Id === itemId);
+        this.isDetailsModalOpen = true;
+    }
+
+    closeDetailsModal() {
+        this.isDetailsModalOpen = false;
+    }
 }
