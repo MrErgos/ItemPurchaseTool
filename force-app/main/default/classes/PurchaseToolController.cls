@@ -42,7 +42,7 @@ public with sharing class PurchaseToolController {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
 
-        String apiKey = 'HgGtV_b6waTm1xAYbz2v8cMccrlSF4_wuvTEWwBYDzQ'; //Delete access key from git
+        String apiKey = 'HgGtV_b6waTm1xAYbz2v8cMccrlSF4_wuvTEWwBYDzQ'; //it is an example key not real one
         String endpoint = 'https://api.unsplash.com/search/photos?query=' + EncodingUtil.urlEncode(itemName, 'UTF-8') + '&per_page=1';
 
         request.setEndpoint(endpoint);
