@@ -10,7 +10,7 @@
                 <lightning-button
                         label="Create Item"
                         variant="brand"
-                        onclick="{handleCreateItem}"
+                        onclick={handleCreateItem}
                         class="slds-m-right_medium">
                 </lightning-button>
             </template>
@@ -23,7 +23,7 @@
                 <lightning-button
                         label="Cart"
                         icon-name="utility:cart"
-                        onclick="{toggleCart}"
+                        onclick={toggleCart}
                         variant="neutral">
                 </lightning-button>
             </div>
@@ -51,7 +51,7 @@
                                         <div class="slds-m-vertical_small" style="height:100px; overflow: hidden;">
                                             <p>{item.Description__c}</p>
                                             <template if:true={item.Image__c}>
-                                                <img src="{item.Image__c}" alt={item.Name} style="max-height: 60px;"/>
+                                                <img src={item.Image__c} alt={item.Name} style="max-height: 60px;"/>
                                             </template>
                                         </div>
                                         <div class="slds-grid slds-grid_align-center">
