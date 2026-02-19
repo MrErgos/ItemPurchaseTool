@@ -69,6 +69,9 @@ public with sharing class PurchaseToolController {
     @AuraEnabled
     public static Id createPurchaseItems(Id accountId, List<Id> itemIds) {
         try {
+            Map<Id, Item__c> itemsMap = new Map<Id, Item__c>([
+                    SELECT Id, Price__c FROM Item__c WHERE Id IN :itemIds
+            ]);
             Purchase__c p = new Purchase__c(
                     ClientId__c = accountId
             );
@@ -76,10 +79,15 @@ public with sharing class PurchaseToolController {
 
             List<PurchaseLine__c> lines = new List<PurchaseLine__c>();
             for(Id itemId : itemIds) {
+                Decimal itemPrice = 0;
+                if (itemsMap.containsKey(itemId) && itemsMap.get(itemId).Price__c != null) {
+                    itemPrice = itemsMap.get(itemId).Price__c;
+                }
                 lines.add(new PurchaseLine__c(
                         PurchaseId__c = p.Id,
                         ItemId__c = itemId,
-                        Amount__c = 1
+                        Amount__c = 1,
+                        UnitCost__c = itemPrice
                 ));
             }
 
